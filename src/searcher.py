@@ -25,12 +25,11 @@ class Searcher:
                                                 # headers=self._tmdb_header
                                                 )
         response_data = (await tmdb_response.json())['results']
-        print(response_data)
+        # print(response_data)
 
         if response_data:
             return [(item['id'], item['title'], item['release_date'][:4]) for item in response_data[:3]]
         return []
-
 
     async def search_offers(self, movie_id: int):
         tmdb_response = await self._session.get(
