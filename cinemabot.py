@@ -45,9 +45,7 @@ async def send_history(message: Message):
 @dp.message()
 async def find_movie(message: Message):
     movie_variants = await searcher.search_tmdb(message.text)
-    reply_txt, reply_markup = await construct_reply_for_variants(movie_variants,
-                                                                 chat_id=message.chat.id,
-                                                                 query=message.text)
+    reply_txt, reply_markup = await construct_reply_for_variants(movie_variants)
     await message.reply(reply_txt, reply_markup=reply_markup)
 
 
