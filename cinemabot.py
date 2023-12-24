@@ -59,7 +59,7 @@ async def movie_not_found(query: CallbackQuery):
 
 @dp.callback_query()
 async def send_movie_offers(query: CallbackQuery, data: SearchData):
-    await scribe.record_query(data)
+    await scribe.record_query(query.message.chat.id, query.message.text, data)
     offers = await searcher.search_offers(query.data, locale_priority=('us/en_us', 'ru/ru'))
     reply_txt = 'Here are some of the places you can watch it:\n'
     for offer in offers:
