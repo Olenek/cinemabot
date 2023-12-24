@@ -10,28 +10,28 @@ class Scribe:
     def __init__(self, db_filename: str):
         if os.path.exists(db_filename):
             self.connection = sqlite3.connect(db_filename)
-
-        self.connection = sqlite3.connect(db_filename)
-        self.connection.execute(
-            """
-            create table queries (
-                query_id integer auto_increment primary_key,
-                chat_id integer,
-                query_dttm datetime,
-                query_txt varchar(256),
-                movie_id integer
+        else:
+            self.connection = sqlite3.connect(db_filename)
+            self.connection.execute(
+                """
+                create table queries (
+                    query_id integer auto_increment primary_key,
+                    chat_id integer,
+                    query_dttm datetime,
+                    query_txt varchar(256),
+                    movie_id integer
+                )
+                """
             )
-            """
-        )
 
-        self.connection.execute(
-            """
-            create table movies (
-                movie_id integer primary_key,
-                movie_nm varchar(256)
+            self.connection.execute(
+                """
+                create table movies (
+                    movie_id integer primary_key,
+                    movie_nm varchar(256)
+                )
+                """
             )
-            """
-        )
 
     async def record_query(self, chat_id: int, query_txt: str, data: SearchData) -> None:
         self.connection.execute(
