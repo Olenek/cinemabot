@@ -33,19 +33,19 @@ class Scribe:
                 """
             )
 
-    async def record_query(self, chat_id: int, query_txt: str, data: SearchData) -> None:
+    async def record_query(self, chat_id: int, query_txt: str, movie_id: int, movie_nm: str) -> None:
         self.connection.execute(
             """
             insert into queries (chat_id, query_dttm, query_txt, movie_id) 
             values (?, ?, ?, ?)
-            """, (chat_id, datetime.now(), query_txt, data.movie_id)
+            """, (chat_id, datetime.now(), query_txt, movie_id)
         )
 
         self.connection.execute(
             """
             insert into movies (movie_id, movie_nm)
             values (?, ?)
-            """, (data.movie_id, data.movie_nm)
+            """, (movie_id, movie_nm)
         )
 
         self.connection.commit()
