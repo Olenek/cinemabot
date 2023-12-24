@@ -36,6 +36,6 @@ class Searcher:
             self._tmdb_details_url + str(movie_id),
             params={'api_key': self._tmdb_token},
         )
-        response_data = (await tmdb_response.json())['watch/providers']
+        response_data = (await tmdb_response.json())
         print(response_data)
         return []
