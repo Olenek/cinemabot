@@ -12,8 +12,7 @@ class Searcher:
         self._tmdb_token = tmdb_token
 
         self._tmdb_search_url = 'https://api.themoviedb.org/3/search/movie'
-        self._justwatch_us = JustWatch(country='US')
-        self._justwatch_ru = JustWatch(country='RU')
+        self._tmdb_details_url = 'https://api.themoviedb.org/3/movie/'
 
         self._session = None
 
@@ -34,4 +33,10 @@ class Searcher:
 
 
     async def search_offers(self, movie_id: int):
+        tmdb_response = await self._session.get(
+            self._tmdb_details_url + str(movie_id),
+            params={'api_key': self._tmdb_token},
+        )
+        response_data = (await tmdb_response.json())['watch/providers']
+        print(response_data)
         return []
