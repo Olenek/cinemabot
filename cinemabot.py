@@ -6,14 +6,15 @@ from aiogram.filters import Command
 from aiogram.methods.send_message import SendMessage
 from aiogram.types import Message, CallbackQuery
 
-from src.history import record_query, get_last_n
 from src.searcher import Searcher
-from src.utils import setup_bot_commands, setup_database, make_reply_from_variants
+from src.scribe import Scribe
+from src.utils import setup_bot_commands, construct_reply_for_variants, SearchData
 
 bot = Bot(token=os.getenv('BOT_TOKEN'))
 searcher = Searcher(tmdb_token=os.getenv('TMDB_TOKEN'))
+scribe = Scribe('database.db')
+
 dp = Dispatcher()
-db_connection = setup_database('database.db')
 
 
 @dp.message(Command('start'))
@@ -35,7 +36,7 @@ async def send_help(message: Message):
 
 @dp.message(Command('history'))
 async def send_history(message: Message):
-    for entry in await get_last_n(db_connection, message.chat.id.real, 5):
+    for entry in await scribe.get_last_n(message.chat.id.real, 5):
         await bot(SendMessage(chat_id=message.chat.id, text=f'Query: {entry[0]}\n'
                                                             f'Result: {entry[1]}\n'
                                                             f'Date: {entry[2]}\n'))
@@ -44,10 +45,10 @@ async def send_history(message: Message):
 @dp.message()
 async def find_movie(message: Message):
     movie_variants = await searcher.search_tmdb(message.text)
-    reply_txt, reply_markup = await make_reply_from_variants(movie_variants)
+    reply_txt, reply_markup = await construct_reply_for_variants(movie_variants,
+                                                                 chat_id=message.chat.id,
+                                                                 query=message.text)
     await message.reply(reply_txt, reply_markup=reply_markup)
-
-    await record_query(db_connection, message.chat.id.real, message.date, message.text, message.text)
 
 
 @dp.callback_query(F.text == 'none')
@@ -57,7 +58,8 @@ async def movie_not_found(query: CallbackQuery):
 
 
 @dp.callback_query()
-async def send_movie_offers(query: CallbackQuery):
+async def send_movie_offers(query: CallbackQuery, data: SearchData):
+    await scribe.record_query(data)
     offers = await searcher.search_offers(query.data, locale_priority=('us/en_us', 'ru/ru'))
     reply_txt = 'Here are some of the places you can watch it:\n'
     for offer in offers:

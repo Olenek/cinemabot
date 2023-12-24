@@ -1,75 +1,68 @@
-import os.path
-import sqlite3
-from sqlite3 import Connection
 from typing import List, Tuple
 
-from aiogram import Bot, types
-from aiogram.utils.keyboard import InlineKeyboardMarkup, InlineKeyboardButton, InlineKeyboardBuilder
+from aiogram import Bot
+from aiogram.filters.callback_data import CallbackData
+from aiogram.types import BotCommand
+from aiogram.utils.keyboard import InlineKeyboardMarkup, InlineKeyboardBuilder
+
+
+class SearchData(CallbackData, prefix='mov'):
+    chat_id: int
+    query: str
+    movie_nm: str
+    movie_id: int
 
 
 async def setup_bot_commands(bot: Bot):
     bot_commands = [
-        types.BotCommand(command="/help", description="Get info about me"),
-        types.BotCommand(command="/start", description="Allow me to introduce myself"),
-        types.BotCommand(command="/stats", description="Display your stats"),
-        types.BotCommand(command="/history", description="Display search history"),
+        BotCommand(command="/help", description="Get info about me"),
+        BotCommand(command="/start", description="Allow me to introduce myself"),
+        BotCommand(command="/stats", description="Display your stats"),
+        BotCommand(command="/history", description="Display search history"),
     ]
     await bot.set_my_commands(bot_commands)
 
 
-def setup_database(db_filename: str) -> Connection:
-    if os.path.exists(db_filename):
-        return sqlite3.connect(db_filename)
-
-    connection = sqlite3.connect(db_filename)
-    connection.execute(
-        """
-        create table queries (
-            query_id integer auto_increment primary_key,
-            chat_id integer,
-            query_dttm datetime,
-            query_txt varchar(256),
-            offer_id integer
-        )
-        """
-    )
-
-    connection.execute(
-        """
-        create table offers (
-            offer_id integer auto_increment primary_key,
-            movie_id integer,
-            movie_nm varchar(256),
-            offer_url varchar(256)
-        )
-        """
-    )
-
-    return connection
-
-
-async def build_keyboard(movie_variants: List[Tuple[int, str, str]]):
+async def build_keyboard(movie_variants: List[Tuple[int, str, str]], chat_id: int, query: str):
     builder = InlineKeyboardBuilder()
     for variant in movie_variants:
-        builder.button(text=f'{variant[1]}, {variant[2]}', callback_data=str(variant[0]))
-    return builder.as_markup()
+        name = f'{variant[1]}, {variant[2]}'
+        builder.button(text=name,
+                       callback_data=SearchData(chat_id=chat_id,
+                                                query=query,
+                                                movie_nm=name,
+                                                movie_id=int(variant[0])))
+    builder.button(text='None of this are what I need', callback_data='none')
+    return builder
 
 
-async def make_reply_from_variants(movie_variants: List[Tuple[int, str, str]]) -> Tuple[str, InlineKeyboardMarkup | None]:
-    pattern = '{}, {}'
+async def construct_reply_for_variants(movie_variants: List[Tuple[int, str, str]],
+                                       chat_id: int,
+                                       query: str) -> Tuple[str, InlineKeyboardMarkup | None]:
+    naming_pattern = '{}, {}'
     kb_builder = InlineKeyboardBuilder()
     if len(movie_variants) > 1:
         reply_txt = 'Here is what I managed to find:'
         for variant in movie_variants:
-            option = pattern.format(variant[1], variant[2])
-            reply_txt += ('\n' + option)
-            kb_builder.button(text=option, callback_data=str(variant[0]))
+            name = naming_pattern.format(variant[1], variant[2])
+            reply_txt += ('\n' + name)
+            kb_builder.button(text=name,
+                              callback_data=SearchData(chat_id=chat_id,
+                                                       query=query,
+                                                       movie_nm=name,
+                                                       movie_id=int(variant[0])))
         kb_builder.button(text='None of this are what I need', callback_data='none')
     elif len(movie_variants) == 1:
-        option = pattern.format(movie_variants[0][1], movie_variants[0][2])
-        reply_txt = 'Is this the movie you are searching?\n' + option
-        kb_builder.button(text=option, callback_data=str(movie_variants[0][0]))
-        kb_builder.button(text='No(', callback_data='none')
+        variant = movie_variants[0]
+        reply_txt = 'Is this the movie you are searching?'
+        name = naming_pattern.format(variant[1], variant[2])
+        reply_txt += ('\n' + name)
+        kb_builder.button(text=name,
+                          callback_data=SearchData(chat_id=chat_id,
+                                                   query=query,
+                                                   movie_nm=name,
+                                                   movie_id=int(variant[0])))
+        kb_builder.button(text='No', callback_data='none')
     else:
         reply_txt = 'Unfortunately, I have not managed to find this movie.'
 
