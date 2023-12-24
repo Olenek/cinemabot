@@ -6,7 +6,7 @@ from aiogram.types import BotCommand
 from aiogram.utils.keyboard import InlineKeyboardMarkup, InlineKeyboardBuilder
 
 
-class SearchData(CallbackData):
+class SearchData(CallbackData, prefix='mv'):
     movie_nm: str
     movie_id: int
 
@@ -43,7 +43,7 @@ async def construct_reply_for_variants(movie_variants: List[Tuple[int, str, str]
             name = naming_pattern.format(variant[1], variant[2])
             reply_txt += ('\n' + name)
             kb_builder.button(text=name,
-                              callback_data=SearchData(movie_nm=name[:56],
+                              callback_data=SearchData(movie_nm=name[:52],
                                                        movie_id=int(variant[0])))
         kb_builder.button(text='None of this are what I need', callback_data='none')
     elif len(movie_variants) == 1:
