@@ -28,7 +28,7 @@ class Searcher:
             return [(item['id'], item['title'], item['release_date'][:4]) for item in response_data[:3]]
         return []
 
-    async def search_offers(self, movie_id: str, locale_priority: Tuple):
+    async def search_offers(self, movie_id: int, locale_priority: Tuple):
         for locale in locale_priority:
             availability_response = await self._session.get(
                 f'{self._justwatch_url}/title/movies/{movie_id}/locale/{locale}')
