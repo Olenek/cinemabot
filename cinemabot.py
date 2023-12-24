@@ -49,15 +49,15 @@ async def find_movie(message: Message):
     await message.reply(reply_txt, reply_markup=reply_markup)
 
 
-@dp.callback_query(F.data == 'none')
+@dp.callback_query(F.text == 'none')
 async def movie_not_found(query: CallbackQuery):
     await query.message.answer('I am sorry that I could not find your movie. Try rewriting the search query.\n'
                                'I recommend using the full title and maybe the year of release.')
 
 
-@dp.callback_query(SearchData.filter())
-async def send_movie_offers(query: SearchData):
-    await scribe.record_query(query.message.chat.id, query.message.text, query.movie_id, query.movie_nm)
+@dp.callback_query(SearchData.filter(F.movie_id is not None))
+async def send_movie_offers(query: CallbackQuery, data: SearchData):
+    await scribe.record_query(query.message.chat.id, query.message.text, data.movie_id, data.movie_nm)
     offers = await searcher.search_offers(query.data, locale_priority=('us/en_us', 'ru/ru'))
     reply_txt = 'Here are some of the places you can watch it:\n'
     for offer in offers:

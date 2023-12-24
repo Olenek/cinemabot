@@ -53,7 +53,7 @@ class Scribe:
     async def get_last_n(self, chat_id: int, n: int) -> List[Tuple[str, str, datetime]]:
         return self.connection.execute(
             """
-            select q.query_dttm, q.query_txt, q.movie_nm from queries q
+            select q.query_txt, q.movie_nm, q.query_dttm  from queries q
             inner join movies m
             on m.movie_id = q.movie_id
             and chat_id == ?
