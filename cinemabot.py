@@ -49,7 +49,7 @@ async def find_movie(message: Message):
     await message.reply(reply_txt, reply_markup=reply_markup)
 
 
-@dp.callback_query(F.text == 'none')
+@dp.callback_query(F.data == 'none')
 async def movie_not_found(query: CallbackQuery):
     await query.message.answer('I am sorry that I could not find your movie. Try rewriting the search query.\n'
                                'I recommend using the full title and maybe the year of release.')
