@@ -12,7 +12,7 @@ class Searcher:
         self._tmdb_token = tmdb_token
 
         self._tmdb_search_url = 'https://api.themoviedb.org/3/search/movie'
-        self._tmdb_watch_providers_url = 'https://api.themoviedb.org/3/movie/{}/watch_providers'
+        self._tmdb_watch_providers_url = 'https://api.themoviedb.org/3/movie/{}/watch/providers'
 
         self._session = None
 
