@@ -48,14 +48,14 @@ def setup_database(db_filename: str) -> Connection:
     return connection
 
 
-async def build_keyboard(movie_variants: List[Tuple[int, str, int]]):
+async def build_keyboard(movie_variants: List[Tuple[int, str, str]]):
     builder = InlineKeyboardBuilder()
     for variant in movie_variants:
         builder.button(text=f'{variant[1]}, {variant[2]}', callback_data=str(variant[0]))
     return builder.as_markup()
 
 
-async def make_reply_from_variants(movie_variants: List[Tuple[int, str, int]]) -> Tuple[str, InlineKeyboardMarkup | None]:
+async def make_reply_from_variants(movie_variants: List[Tuple[int, str, str]]) -> Tuple[str, InlineKeyboardMarkup | None]:
     pattern = '{}, {}'
     kb_builder = InlineKeyboardBuilder()
     if len(movie_variants) > 1:
