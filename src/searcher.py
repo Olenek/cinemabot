@@ -12,7 +12,7 @@ class Searcher:
         self._tmdb_token = tmdb_token
 
         self._tmdb_search_url = 'https://api.themoviedb.org/3/search/movie'
-        self._tmdb_details_url = 'https://api.themoviedb.org/3/movie/'
+        self._tmdb_watch_providers_url = 'https://api.themoviedb.org/3/movie/{}/watch_providers'
 
         self._session = None
 
@@ -31,9 +31,9 @@ class Searcher:
             return [(item['id'], item['title'], item['release_date'][:4]) for item in response_data[:3]]
         return []
 
-    async def search_offers(self, movie_id: int):
+    async def search_offers(self, movie_id: int, locale_priority=('RU', 'EN')):
         tmdb_response = await self._session.get(
-            self._tmdb_details_url + str(movie_id),
+            self._tmdb_watch_providers_url.format(movie_id),
             params={'api_key': self._tmdb_token},
         )
         response_data = (await tmdb_response.json())
