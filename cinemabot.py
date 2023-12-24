@@ -55,7 +55,7 @@ async def movie_not_found(query: CallbackQuery):
                                'I recommend using the full title and maybe the year of release.')
 
 
-@dp.callback_query()
+@dp.callback_query(SearchData.filter())
 async def send_movie_offers(query: CallbackQuery, data: SearchData):
     await scribe.record_query(query.message.chat.id, query.message.text, data)
     offers = await searcher.search_offers(query.data, locale_priority=('us/en_us', 'ru/ru'))
