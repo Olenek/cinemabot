@@ -59,6 +59,7 @@ class Searcher:
         html = await tmdb_response.read()
 
         soup = BeautifulSoup(html, 'html.parser')
+        print(soup)
         section = soup.find('div', {'class': 'ott_provider'})
         print(section)
         if section is None:
