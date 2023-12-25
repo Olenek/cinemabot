@@ -33,7 +33,7 @@ async def construct_reply_for_variants(movie_variants: List[Tuple[int, str, str]
             reply_txt += ('\n' + button_txt)
             kb_builder.button(text=button_txt[:16] + '...',
                               callback_data=SearchData(movie_id=int(variant[0]), movie_nm=name.replace(':', ',')[:48]))
-        reply_txt += '\nPlease pick your movie'
+        reply_txt += '\n\nPlease pick the movie you want to watch.'
         kb_builder.button(text='None', callback_data='none')
     elif len(movie_variants) == 1:
         variant = movie_variants[0]
