@@ -52,12 +52,13 @@ def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provi
         -> str | None:
     superdomain, domain = result['href'].split('//')[1].split('.')[:2]
     if provider_nm.lower().split(' ')[0] in superdomain or provider_nm.lower().split(' ')[0] in domain:
-        # if loc_dict['title_pattern'] in result['title'].lower():
-        return result['href']
-        # else:
-        #     print(f"bad title: {result['title']}")
+        if loc_dict['title_pattern'] in result['title'].lower():
+            return result['href']
+        else:
+            print(f"bad title: {result['title']}")
     else:
-        print(f"bad href: {result['href']} for provider {provider_nm}")
+        pass
+        # print(f"bad href: {result['href']} for provider {provider_nm}")
 
     return None
 
