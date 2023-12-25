@@ -1,13 +1,16 @@
 from typing import List, Tuple, Dict, Any
+
 from aiohttp import ClientSession
 from duckduckgo_search import AsyncDDGS
 
 locales = {
     'RU': {
-        'pattern': '{} смотреть на {}'
+        'pattern': '{} смотреть на {}',
+        'emoji': '🇷🇺'
     },
     'US': {
-        'pattern': '{} watch on {}'
+        'pattern': '{} watch on {}',
+        'emoji': '🇺🇸'
     }
 }
 

@@ -3,8 +3,6 @@ import sqlite3
 from datetime import datetime
 from typing import Tuple, List
 
-from src.utils import SearchData
-
 
 class Scribe:
     def __init__(self, db_filename: str):
