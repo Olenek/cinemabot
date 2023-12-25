@@ -6,20 +6,31 @@ from duckduckgo_search import AsyncDDGS
 locales = {
     'RU': {
         'pattern': '{} смотреть на {}',
+        'title_pattern': 'смотреть',
         'emoji': '🇷🇺',
         'region': 'ru-ru',
     },
     'US': {
         'pattern': '{} watch on {}',
+        'title_pattern': 'watch',
         'emoji': '🇺🇸',
         'region': 'us-en',
     },
     'JP': {
         'pattern': '{} {} de miru',
+        'title_pattern': '',
         'emoji': '🇯🇵',
         'region': 'jp-jp',
     }
 }
+
+
+def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provider_nm: str)\
+        -> str | None:
+    if provider_nm.lower().replace(' ', '') in result['href']:
+        if loc_dict['title_pattern'] in result['title']:
+            return result['href']
+    return None
 
 
 class Searcher:
@@ -121,11 +132,12 @@ class Searcher:
 
         return offers
 
-    async def _try_provider(self, movie_str: str, provider_nm: str, locale: str) -> str | None:
-        loc = locales[locale]
-        query = loc['pattern'].format(movie_str, provider_nm)
-        results = [r async for r in self._duckduckgo_search.text(query, region=loc['region'], max_results=5)]
+    async def _try_provider(self, movie_str: str, provider_nm: str, locale_nm: str) -> str | None:
+        locale = locales[locale_nm]
+        query = locale['pattern'].format(movie_str, provider_nm)
+        results = [r async for r in self._duckduckgo_search.text(query, region=locale['region'], max_results=5)]
         for result in results:
-            if provider_nm.lower().replace(' ', '') in result['href']:
-                return result['href']
+            url = _check_search_result(result, locale, provider_nm)
+            if url is not None:
+                return url
         return None
