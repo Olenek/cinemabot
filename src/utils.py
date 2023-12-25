@@ -40,19 +40,19 @@ async def construct_reply_for_variants(movie_variants: List[Tuple[int, str, str]
     if len(movie_variants) > 1:
         reply_txt = 'Here is what I managed to find:'
         for variant in movie_variants:
-            name = naming_pattern.format(variant[1], variant[2])
+            name = naming_pattern.format(variant[1], variant[2])[:52].replace(':', ',')
             reply_txt += ('\n' + name)
             kb_builder.button(text=name,
-                              callback_data=SearchData(movie_nm=name[:52],
+                              callback_data=SearchData(movie_nm=name,
                                                        movie_id=int(variant[0])))
         kb_builder.button(text='None of this are what I need', callback_data='none')
     elif len(movie_variants) == 1:
         variant = movie_variants[0]
         reply_txt = 'Is this the movie you are searching?'
-        name = naming_pattern.format(variant[1], variant[2])
+        name = naming_pattern.format(variant[1], variant[2])[:52].replace(':', ',')
         reply_txt += ('\n' + name)
         kb_builder.button(text=name,
-                          callback_data=SearchData(movie_nm=name[:56],
+                          callback_data=SearchData(movie_nm=name,
                                                    movie_id=int(variant[0])))
         kb_builder.button(text='No', callback_data='none')
     else:
