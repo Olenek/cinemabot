@@ -18,7 +18,7 @@ locales = {
         }
     },
     'US': {
-        'pattern': '{} watch on {}',
+        'pattern': 'watch {} on {}',
         'title_pattern': 'watch',
         'emoji': '🇺🇸',
         'region': 'us-en',
