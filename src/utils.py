@@ -8,6 +8,7 @@ from aiogram.utils.keyboard import InlineKeyboardMarkup, InlineKeyboardBuilder
 
 class SearchData(CallbackData, prefix='mv'):
     movie_id: int
+    movie_nm: str
 
 
 async def setup_bot_commands(bot: Bot):
@@ -31,7 +32,7 @@ async def construct_reply_for_variants(movie_variants: List[Tuple[int, str, str]
             button_txt = f'{index + 1}. {name}'
             reply_txt += ('\n' + button_txt)
             kb_builder.button(text=button_txt[:16] + '...',
-                              callback_data=SearchData(movie_id=int(variant[0])))
+                              callback_data=SearchData(movie_id=int(variant[0]), movie_nm=name.replace(':', ',')[:48]))
         reply_txt += '\nPlease pick your movie'
         kb_builder.button(text='None', callback_data='none')
     elif len(movie_variants) == 1:
@@ -41,7 +42,7 @@ async def construct_reply_for_variants(movie_variants: List[Tuple[int, str, str]
         button_txt = name
         reply_txt += ('\n' + button_txt)
         kb_builder.button(text=button_txt[:16] + '...',
-                          callback_data=SearchData(movie_id=int(variant[0])))
+                          callback_data=SearchData(movie_id=int(variant[0]), movie_nm=name.replace(':', ',')[:48]))
         kb_builder.button(text='No', callback_data='none')
     else:
         reply_txt = 'Unfortunately, I have not managed to find this movie.'
