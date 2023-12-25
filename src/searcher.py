@@ -54,6 +54,10 @@ def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provi
     if provider_nm.lower().split(' ')[0] in superdomain or provider_nm.lower().split(' ')[0] in domain:
         if loc_dict['title_pattern'] in result['title'].lower():
             return result['href']
+        else:
+            print(f"bad title: {result['title']}")
+    else:
+        print(f"bad href: {result['href']}")
     return None
 
 
