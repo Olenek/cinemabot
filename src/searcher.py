@@ -57,9 +57,8 @@ def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provi
         else:
             print(f"bad title: {result['title']}")
     else:
-        print(f"bad href: {result['href']}")
-        print(domain)
-        print(superdomain)
+        print(f"bad href: {result['href']} for provider {provider_nm}")
+
     return None
 
 
