@@ -53,7 +53,7 @@ class Searcher:
             params={'api_key': self._tmdb_token},
         )
         response_data = await tmdb_response.json()
-        return response_data['title'], response_data['release_date'][:4]
+        return response_data['original_title'], response_data['release_date'][:4]
 
     async def search_offers(self, movie_id: int) -> Dict[str, str]:
         """
