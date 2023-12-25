@@ -1,25 +1,13 @@
 from typing import List, Tuple, Dict, Any
-
 from aiohttp import ClientSession
-from bs4 import BeautifulSoup
+from duckduckgo_search import AsyncDDGS
 
-# user_agents = [
-#     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 OPR/72.0.3815.465 (Edition Yx GX)',
-#     'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36',
-#     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-#     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Safari/605.1.15',
-#     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36',
-#     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Safari/605.1.15',
-#     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 Edg/87.0.664.75',
-#     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.3 Safari/605.1.15',
-#     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.59',
-# ]
 locales = {
     'RU': {
-        'pattern': '{} смотреть на {}'
+        'pattern': '\{} смотреть на {}'
     },
     'US': {
-        'pattern': '{} watch on {}'
+        'pattern': '\{} watch on {}'
     }
 }
 
@@ -35,20 +23,19 @@ class Searcher:
         self._tmdb_search_url = 'https://api.themoviedb.org/3/search/movie'
         self._tmdb_watch_providers_url = 'https://api.themoviedb.org/3/movie/{}/watch/providers'
         self._tmdb_translations_url = 'https://api.themoviedb.org/3/movie/{}/translations'
-        self._google_search_url = 'https://www.google.com/search'
-
+        self._google_search_url = 'https://duckduckgo.com'
+        self._duckduckgo_search = None
         self._session = None
 
     async def begin_session(self):
         self._session: ClientSession = ClientSession()
+        self._duckduckgo_search: AsyncDDGS = AsyncDDGS()
 
     async def search_tmdb(self, query: str) -> List[Tuple[int, str, str]]:
         tmdb_response = await self._session.get(self._tmdb_search_url,
                                                 params={'query': query, 'api_key': self._tmdb_token},
-                                                # headers=self._tmdb_header
                                                 )
         response_data = (await tmdb_response.json())['results']
-        # print(response_data)
 
         if response_data:
             return [(item['id'], item['title'], item['release_date'][:4]) for item in response_data[:3]]
@@ -109,17 +96,8 @@ class Searcher:
 
     async def _try_provider(self, movie_nm: str, provider_nm: str, locale: str) -> str | None:
         query = locales[locale]['pattern'].format(movie_nm, provider_nm)
-        print(query)
-        async with self._session.get(
-                url=self._google_search_url, params={'q': query}, headers={
-                    'Accept': '*/*',
-                    'Accept-Language': 'en-US,en;q=0.5',
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82',
-                }
-        ) as response:
-            response_text = await response.text()
-            soup = BeautifulSoup(response_text, 'html.parser')
-            first_link = soup.find(id='search').find('a')
-            if first_link.get('href', None) is not None:
-                return first_link['href']
-            return None
+        results = [r async for r in self._duckduckgo_search.text(query, max_results=3)]
+        for result in results:
+            if result['title'].contains(provider_nm):
+                return result['href']
+        return None
