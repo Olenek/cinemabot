@@ -60,7 +60,7 @@ async def movie_not_found(query: CallbackQuery):
 async def send_movie_offers(query: CallbackQuery):
     data = SearchData.unpack(query.data)
     await scribe.record_query(query.message.chat.id, query.message.text, data.movie_id, data.movie_nm)
-    offers: Dict[str, str] = await searcher.search_offers(data.movie_id, data.movie_nm)
+    offers: Dict[str, str] = await searcher.search_offers(data.movie_id)
 
     if len(offers) > 1:
         reply_txt = 'Here are some of the places you can watch it:'
