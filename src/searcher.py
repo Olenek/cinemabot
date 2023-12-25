@@ -73,8 +73,8 @@ class Searcher:
         async with self._session.get(
                 url=self._tmdb_translations_url.format(movie_id), params={'api_key': self._tmdb_token},
         ) as response:
-            json = await response.json()
-            for translation in await json['translations']:
+            response_data = await response.json()
+            for translation in response_data['translations']:
                 if translation['iso_3166_1'] in locales.keys():
                     if translation['data']['title'] != '':
                         translations[translation['iso_3166_1']] = translation['data']['title']
