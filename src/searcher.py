@@ -1,3 +1,5 @@
+import re
+
 from justwatch import JustWatch
 from typing import List, Tuple
 from aiohttp import ClientSession
@@ -56,4 +58,5 @@ class Searcher:
 
         soup = BeautifulSoup(await tmdb_response.read().decode('utf-8'), 'html.parser')
         print(soup)
+        print(soup.find_all(re.compile('^h[1-6]$')))
         return []
