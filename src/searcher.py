@@ -86,14 +86,15 @@ class Searcher:
         watch_variants = [
             'flatrate',
             'rent',
-            'buy'
+            # 'buy'
         ]
         for variant in watch_variants:
-            for provider_offer in options[variant]:
-                if provider_offer['provider_name'] != 'Kinopoisk':
-                    result = await self._try_provider(translations[locale_nm], provider_offer['provider_name'], locale_nm)
-                    if result is not None:
-                        return result
+            if variant in options.keys():
+                for provider_offer in options[variant]:
+                    if provider_offer['provider_name'] != 'Kinopoisk':
+                        result = await self._try_provider(translations[locale_nm], provider_offer['provider_name'], locale_nm)
+                        if result is not None:
+                            return result
         return None
 
     async def _construct_offers(self, movie_id: int, movie_nm: str, loc_options: Dict[str, Dict[Any, Any]]) -> Dict[
