@@ -46,20 +46,11 @@ locales = {
     }
 }
 
-providers = [
-    'Netflix', 'Amazon Prime Video',
-    'Disney Plus', 'Apple TV Plus',
-    'Apple TV', 'Hulu',
-    'Crunchyroll', 'HBO Max',
-    'Peacock', 'Peacock Premium',
-    'Youtube', 'Google Play Movies',
-    'Amazon Video',
-]
-
 
 def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provider_nm: str) \
         -> str | None:
-    superdom, subdom = result['href'].split('.')[:2]
+    print(provider_nm)
+    superdom, subdom = result['href'].split('//')[1].split('.')[:2]
     if superdom in loc_dict['providers'] or subdom in loc_dict['providers']:
         if loc_dict['title_pattern'] in result['title'].lower():
             print(provider_nm)
