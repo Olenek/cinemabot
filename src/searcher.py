@@ -1,7 +1,7 @@
 from justwatch import JustWatch
 from typing import List, Tuple
 from aiohttp import ClientSession
-
+from bs4 import BeautifulSoup
 
 class Searcher:
     def __init__(self, tmdb_token: str):
@@ -53,4 +53,7 @@ class Searcher:
         tmdb_response = await self._session.get(
             tmdb_url
         )
-        print(tmdb_response)
+
+        soup = BeautifulSoup(await tmdb_response.read().decode('utf-8'), 'html.parser')
+        print(soup)
+        return []
