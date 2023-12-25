@@ -24,13 +24,6 @@ class Scribe:
 
             self.connection.execute(
                 """
-                create table results (
-                    result_id 
-                """
-            )
-
-            self.connection.execute(
-                """
                 create table movies (
                     movie_id integer primary_key,
                     movie_nm varchar(256)
