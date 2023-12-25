@@ -11,9 +11,8 @@ locales = {
         'region': 'ru-ru',
         'providers': {
             'Youtube', 'Wink'
-                       'Ivi', 'Premier',
+            'Ivi', 'Premier',
             'Okko', 'Amediateka',
-            'Kion',
         }
     },
     'US': {
@@ -51,7 +50,8 @@ locales = {
 
 def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provider_nm: str) \
         -> str | None:
-    if provider_nm.lower().split(' ')[0] in result['href'].split('.')[1]:
+    superdomain, domain = result['href'].split('//')[1].split('.')[:2]
+    if provider_nm.lower().split(' ')[0] in superdomain or provider_nm.lower().split(' ')[0] in domain:
         if loc_dict['title_pattern'] in result['title'].lower():
             return result['href']
     return None
