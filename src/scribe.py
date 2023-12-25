@@ -55,15 +55,18 @@ class Scribe:
             inner join movies m
             on m.movie_id = q.movie_id
             and chat_id == ?
-            """, (chat_id,)
-        ).fetchmany(n)
+            order by query_dttm desc 
+            limit ?
+            """, (chat_id, n)
+        ).fetchall()
 
     async def get_stats(self, chat_id: int) -> List[Tuple[str, str, datetime]]:
         return self.connection.execute(
             """
-            select m.movie_nm, count(*) from queries q
+            select m.movie_nm, count(*) as cnt from queries q
             inner join movies m
             on m.movie_id = q.movie_id
             and chat_id == ?
+            order by cnt desc
             """, (chat_id,)
         ).fetchmany(5)
