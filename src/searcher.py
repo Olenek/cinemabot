@@ -153,6 +153,8 @@ class Searcher:
                             translations[locale_nm], provider_offer['provider_name'], locale_nm)
                         if result is not None:
                             return result
+                    else:
+                        print('Ignoring ' + provider_offer['provider_name'])
         return None
 
     async def _construct_offers(self, movie_id: int, movie_nm: str, year: str,
