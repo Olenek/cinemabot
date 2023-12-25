@@ -71,8 +71,7 @@ async def movie_not_found(query: CallbackQuery, state: FSMContext):
                                'I recommend using the full title and maybe the year of release.')
 
 
-@dp.callback_query(SearchData.filter(F.movie_id))
-@dp.message(MyDialog.waits)
+@dp.callback_query(SearchData.filter(F.movie_id), MyDialog.waits)
 async def send_movie_offers(query: CallbackQuery, state: FSMContext):
     data = SearchData.unpack(query.data)
     usr_query = (await state.get_data())['query']
