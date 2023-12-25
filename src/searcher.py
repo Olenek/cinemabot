@@ -104,6 +104,7 @@ class Searcher:
         offers: Dict[str, str | None] = {}
         for locale_nm, option in loc_options.items():
             offers[locale_nm] = await self._construct_loc_offer(locale_nm, option, translations)
+        print(offers)
         return offers
 
     async def _try_provider(self, movie_nm: str, provider_nm: str, locale: str) -> str | None:
