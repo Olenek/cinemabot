@@ -27,9 +27,9 @@ locales = {
 
 def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provider_nm: str)\
         -> str | None:
-    if provider_nm.lower().replace(' ', '') in result['href']:
-        if loc_dict['title_pattern'] in result['title']:
-            return result['href']
+    # if provider_nm.lower().replace(' ', '') in result['href']:
+    if loc_dict['title_pattern'] in result['title']:
+        return result['href']
     return None
 
 
