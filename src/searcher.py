@@ -36,16 +36,17 @@ class Searcher:
             self._tmdb_watch_providers_url.format(movie_id),
             params={'api_key': self._tmdb_token},
         )
-        response_data = (await tmdb_response.json()['result'])
-        print(response_data)
-        any_locale = next(iter(response_data.keys()))
+        response_data = (await tmdb_response.json())
+
+        options =  response_data['result']
+        any_locale = next(iter(options.keys()))
         print(any_locale)
 
         for locale in locale_priority:
-            if response_data.get(locale, None) is not None:
-                return await self._construct_offer(response_data[locale]['link'])
+            if options.get(locale, None) is not None:
+                return await self._construct_offer(options[locale]['link'])
 
-        fallback_url = response_data[any_locale]['link']
+        fallback_url = options[any_locale]['link']
         print(fallback_url)
         return await self._construct_offer(fallback_url[:10])
 
