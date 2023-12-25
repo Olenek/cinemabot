@@ -67,6 +67,7 @@ class Scribe:
             inner join movies m
             on m.movie_id = q.movie_id
             and chat_id == ?
+            group by m.movie_nm
             order by cnt desc
             """, (chat_id,)
         ).fetchmany(5)

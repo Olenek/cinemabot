@@ -10,11 +10,12 @@ locales = {
         'emoji': '🇷🇺',
         'region': 'ru-ru',
         'providers': {
-            'Youtube', 'Google Play Movies',
-            'Ivi', 'Premier',
-            'Okko', 'Amediateka',
-            'Apple TV Plus', 'Apple TV',
-            'FilmBox+', 'Takflix'
+            'youtube', 'ivi',
+            'premier', 'okko',
+            'amediateka', 'apple',
+            'filmbox', 'kion',
+            'start', 'viju',
+            'wink',
         }
     },
     'US': {
@@ -23,13 +24,11 @@ locales = {
         'emoji': '🇺🇸',
         'region': 'us-en',
         'providers': {
-            'Netflix', 'Amazon Prime Video',
-            'Disney Plus', 'Apple TV Plus',
-            'Apple TV', 'Hulu',
-            'Crunchyroll', 'HBO Max',
-            'Peacock', 'Peacock Premium',
-            'Youtube', 'Google Play Movies',
-            'Amazon Video',
+            'netflix', 'primevideo',
+            'disneyplus', 'apple',
+            'hulu', 'crunchyroll', 'hbomax',
+            'max', 'peacocktv',
+            'youtube', 'vudu'
         }
     },
     'JP': {
@@ -38,13 +37,11 @@ locales = {
         'emoji': '🇯🇵',
         'region': 'jp-jp',
         'providers': {
-            'Netflix', 'Amazon Prime Video',
-            'Disney Plus', 'Apple TV Plus',
-            'Apple TV', 'Hulu',
-            'Crunchyroll', 'HBO Max',
-            'Peacock', 'Peacock Premium',
-            'Youtube', 'Google Play Movies',
-            'Amazon Video', 'Vudu'
+            'netflix', 'primevideo',
+            'disneyplus', 'apple',
+            'hulu', 'crunchyroll', 'hbomax',
+            'max', 'peacocktv',
+            'youtube', 'vudu'
         }
     }
 }
@@ -62,7 +59,8 @@ providers = [
 
 def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provider_nm: str) \
         -> str | None:
-    if provider_nm.lower().split(' ')[0] in result['href'].split('.')[1]:
+    superdom, subdom = result['href'].split('.')[:2]
+    if superdom in loc_dict['providers'] or subdom in loc_dict['providers']:
         if loc_dict['title_pattern'] in result['title'].lower():
             print(provider_nm)
             return result['href']
