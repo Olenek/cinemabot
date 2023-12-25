@@ -98,6 +98,6 @@ class Searcher:
         query = locales[locale]['pattern'].format(movie_nm, provider_nm)
         results = [r async for r in self._duckduckgo_search.text(query, max_results=3)]
         for result in results:
-            if result['title'].contains(provider_nm):
+            if provider_nm.lower().replace(' ', '') in result['href']:
                 return result['href']
         return None
