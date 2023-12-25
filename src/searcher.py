@@ -10,11 +10,10 @@ locales = {
         'emoji': '🇷🇺',
         'region': 'ru-ru',
         'providers': {
-            'Youtube', 'Google Play Movies',
-            'Ivi', 'Premier',
+            'Youtube', 'Wink'
+                       'Ivi', 'Premier',
             'Okko', 'Amediateka',
-            'Apple TV Plus', 'Apple TV',
-            'FilmBox+', 'Takflix'
+            'Kion',
         }
     },
     'US': {
@@ -26,8 +25,8 @@ locales = {
             'Netflix', 'Amazon Prime Video',
             'Disney Plus', 'Apple TV Plus',
             'Apple TV', 'Hulu',
-            'Crunchyroll', 'HBO Max',
-            'Peacock', 'Peacock Premium',
+            'Crunchyroll', 'HBO Max', 'Max', 'Max Amazon Channel'
+                                             'Peacock', 'Peacock Premium',
             'Youtube', 'Google Play Movies',
             'Amazon Video',
         }
@@ -41,23 +40,13 @@ locales = {
             'Netflix', 'Amazon Prime Video',
             'Disney Plus', 'Apple TV Plus',
             'Apple TV', 'Hulu',
-            'Crunchyroll', 'HBO Max',
-            'Peacock', 'Peacock Premium',
+            'Crunchyroll', 'HBO Max', 'Max', 'Max Amazon Channel'
+                                             'Peacock', 'Peacock Premium',
             'Youtube', 'Google Play Movies',
-            'Amazon Video', 'Vudu'
+            'Amazon Video',
         }
     }
 }
-
-providers = [
-    'Netflix', 'Amazon Prime Video',
-    'Disney Plus', 'Apple TV Plus',
-    'Apple TV', 'Hulu',
-    'Crunchyroll', 'HBO Max',
-    'Peacock', 'Peacock Premium',
-    'Youtube', 'Google Play Movies',
-    'Amazon Video',
-]
 
 
 def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provider_nm: str) \
