@@ -52,11 +52,13 @@ class Searcher:
         return await self._construct_offer(fallback_url[:10])
 
     async def _construct_offer(self, tmdb_url: str):
-        tmdb_html = await (await self._session.get(
+        tmdb_response = await self._session.get(
             tmdb_url
-        ).read())
+        )
 
-        soup = BeautifulSoup(tmdb_html.decode('utf-8'), 'html.parser')
+        html = await tmdb_response.read()
+
+        soup = BeautifulSoup(html, 'html.parser')
         print(soup)
         print(soup.find_all(re.compile('^h[1-6]$')))
         return []
