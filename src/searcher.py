@@ -9,7 +9,7 @@ locales = {
         'title_pattern': 'смотреть',
         'emoji': '🇷🇺',
         'region': 'ru-ru',
-        'providers': {
+        'providers_pattern': {
             'youtube', 'ivi',
             'premier', 'okko',
             'amediateka', 'apple',
@@ -23,7 +23,7 @@ locales = {
         'title_pattern': 'watch',
         'emoji': '🇺🇸',
         'region': 'us-en',
-        'providers': {
+        'providers_pattern': {
             'netflix', 'primevideo',
             'disneyplus', 'apple',
             'hulu', 'crunchyroll', 'hbomax',
@@ -36,7 +36,7 @@ locales = {
         'title_pattern': '',
         'emoji': '🇯🇵',
         'region': 'jp-jp',
-        'providers': {
+        'providers_pattern': {
             'netflix', 'primevideo',
             'disneyplus', 'apple',
             'hulu', 'crunchyroll', 'hbomax',
@@ -46,14 +46,21 @@ locales = {
     }
 }
 
+providers = {
+    'Netflix', 'Amazon Prime Video', 'Amazon Video',
+    'Disney Plus', 'Apple TV Plus', 'Apple TV', 'Hulu',
+    'Crunchyroll', 'HBO Max', 'Max'
+                              'Peacock', 'Peacock Premium', 'Youtube',
+    'Ivi', 'Premier', 'Okko',
+    'Amediateka', 'FilmBox+', 'Kion',
+}
 
-def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provider_nm: str) \
+
+def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str]) \
         -> str | None:
-    print(provider_nm)
     superdom, subdom = result['href'].split('//')[1].split('.')[:2]
-    if superdom in loc_dict['providers'] or subdom in loc_dict['providers']:
+    if superdom in loc_dict['providers_pattern'] or subdom in loc_dict['providers_pattern']:
         if loc_dict['title_pattern'] in result['title'].lower():
-            print(provider_nm)
             return result['href']
     return None
 
@@ -103,8 +110,8 @@ class Searcher:
             params={'api_key': self._tmdb_token},
         )
         response_data = await tmdb_response.json()
-        providers = response_data['results']
-        options = {locale_nm: providers.get(locale_nm, {}) for locale_nm in locales.keys()}
+        provider_options = response_data['results']
+        options = {locale_nm: provider_options.get(locale_nm, {}) for locale_nm in locales.keys()}
         name, year = await self.get_name_year(movie_id)
         return await self._construct_offers(movie_id, name, year, options)
 
@@ -137,17 +144,16 @@ class Searcher:
         for variant in watch_variants:
             if variant in options.keys():
                 for provider_offer in options[variant]:
-                    result = await self._try_provider(translations[locale_nm], provider_offer['provider_name'],
-                                                      locale_nm)
-                    if result is not None:
-                        return result
+                    if provider_offer['provider_name'] in providers:
+                        result = await self._try_provider(translations[locale_nm], provider_offer['provider_name'],
+                                                          locale_nm)
+                        if result is not None:
+                            return result
         return None
 
     async def _construct_offers(self, movie_id: int, movie_nm: str, year: str,
                                 loc_options: Dict[str, Dict[Any, Any]]) -> Dict[str, str]:
         translations = await self._get_translated_titles(movie_id, movie_nm, year)
-        print(movie_nm)
-        print(translations)
         offers: Dict[str, str] = {}
         for locale_nm, option in loc_options.items():
             offer = await self._construct_loc_offer(locale_nm, option, translations)
@@ -159,12 +165,9 @@ class Searcher:
     async def _try_provider(self, movie_str: str, provider_nm: str, locale_nm: str) -> str | None:
         locale = locales[locale_nm]
         query = locale['pattern'].format(movie_str, provider_nm)
-        print(query)
         results = [r async for r in self._duckduckgo_search.text(query, region=locale['region'], max_results=5)]
-        print(results)
         for result in results:
-            print(result['href'])
-            url = _check_search_result(result, locale, provider_nm)
+            url = _check_search_result(result, locale)
             if url is not None:
                 return url
         return None
