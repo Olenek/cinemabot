@@ -65,7 +65,6 @@ def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provi
     print(result['href'].split('.')[1])
     if provider_nm.lower().split(' ')[0] in result['href'].split('.')[1]:
         if loc_dict['title_pattern'] in result['title'].lower():
-            print(provider_nm)
             return result['href']
     return None
 
@@ -150,8 +149,8 @@ class Searcher:
             if variant in options.keys():
                 for provider_offer in options[variant]:
                     if provider_offer['provider_name'] in locales[locale_nm]['providers']:
-                        result = await self._try_provider(translations[locale_nm], provider_offer['provider_name'],
-                                                          locale_nm)
+                        result = await self._try_provider(
+                            translations[locale_nm], provider_offer['provider_name'], locale_nm)
                         if result is not None:
                             return result
         return None
@@ -159,10 +158,10 @@ class Searcher:
     async def _construct_offers(self, movie_id: int, movie_nm: str, year: str,
                                 loc_options: Dict[str, Dict[Any, Any]]) -> Dict[str, str]:
         translations = await self._get_translated_titles(movie_id, movie_nm, year)
-        print(movie_nm)
         print(translations)
         offers: Dict[str, str] = {}
         for locale_nm, option in loc_options.items():
+            print(locale_nm)
             offer = await self._construct_loc_offer(locale_nm, option, translations)
             if offer is not None:
                 offers[locale_nm] = offer
@@ -170,6 +169,7 @@ class Searcher:
         return offers
 
     async def _try_provider(self, movie_str: str, provider_nm: str, locale_nm: str) -> str | None:
+        print(provider_nm)
         locale = locales[locale_nm]
         query = locale['pattern'].format(movie_str, provider_nm)
         results = [r async for r in self._duckduckgo_search.text(query, region=locale['region'], max_results=10)]
