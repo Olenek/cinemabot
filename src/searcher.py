@@ -9,23 +9,58 @@ locales = {
         'title_pattern': 'смотреть',
         'emoji': '🇷🇺',
         'region': 'ru-ru',
+        'providers': {
+            'Youtube', 'Google Play Movies',
+            'Ivi', 'Premier',
+            'Okko', 'Amediateka',
+            'Apple TV Plus', 'Apple TV',
+            'FilmBox+', 'Takflix'
+        }
     },
     'US': {
         'pattern': '{} watch on {}',
         'title_pattern': 'watch',
         'emoji': '🇺🇸',
         'region': 'us-en',
+        'providers': {
+            'Netflix', 'Amazon Prime Video',
+            'Disney Plus', 'Apple TV Plus',
+            'Apple TV', 'Hulu',
+            'Crunchyroll', 'HBO Max',
+            'Peacock', 'Peacock Premium',
+            'Youtube', 'Google Play Movies',
+            'Amazon Video',
+        }
     },
     'JP': {
         'pattern': '{} {} de miru',
         'title_pattern': '',
         'emoji': '🇯🇵',
         'region': 'jp-jp',
+        'providers': {
+            'Netflix', 'Amazon Prime Video',
+            'Disney Plus', 'Apple TV Plus',
+            'Apple TV', 'Hulu',
+            'Crunchyroll', 'HBO Max',
+            'Peacock', 'Peacock Premium',
+            'Youtube', 'Google Play Movies',
+            'Amazon Video', 'Vudu'
+        }
     }
 }
 
+providers = [
+    'Netflix', 'Amazon Prime Video',
+    'Disney Plus', 'Apple TV Plus',
+    'Apple TV', 'Hulu',
+    'Crunchyroll', 'HBO Max',
+    'Peacock', 'Peacock Premium',
+    'Youtube', 'Google Play Movies',
+    'Amazon Video',
+]
 
-def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provider_nm: str)\
+
+def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provider_nm: str) \
         -> str | None:
     # if provider_nm.lower().replace(' ', '') in result['href']:
     if loc_dict['title_pattern'] in result['title'].lower():
@@ -113,7 +148,7 @@ class Searcher:
         for variant in watch_variants:
             if variant in options.keys():
                 for provider_offer in options[variant]:
-                    if provider_offer['provider_name'] != 'Kinopoisk':
+                    if provider_offer['provider_name'] in locales[locale_nm]['providers']:
                         result = await self._try_provider(translations[locale_nm], provider_offer['provider_name'],
                                                           locale_nm)
                         if result is not None:
