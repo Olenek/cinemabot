@@ -37,8 +37,7 @@ class Searcher:
             params={'api_key': self._tmdb_token},
         )
         response_data = (await tmdb_response.json())
-
-        options =  response_data['result']
+        options = response_data['results']
         any_locale = next(iter(options.keys()))
         print(any_locale)
 
