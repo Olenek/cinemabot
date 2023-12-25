@@ -26,7 +26,7 @@ locales = {
             'Disney Plus', 'Apple TV Plus',
             'Apple TV', 'Hulu',
             'Crunchyroll', 'HBO Max', 'Max', 'Max Amazon Channel'
-                                             'Peacock', 'Peacock Premium',
+            'Peacock', 'Peacock Premium',
             'Youtube', 'Google Play Movies',
             'Amazon Video',
         }
@@ -41,7 +41,7 @@ locales = {
             'Disney Plus', 'Apple TV Plus',
             'Apple TV', 'Hulu',
             'Crunchyroll', 'HBO Max', 'Max', 'Max Amazon Channel'
-                                             'Peacock', 'Peacock Premium',
+            'Peacock', 'Peacock Premium',
             'Youtube', 'Google Play Movies',
             'Amazon Video',
         }
@@ -51,7 +51,6 @@ locales = {
 
 def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provider_nm: str) \
         -> str | None:
-    print(result['href'].split('.')[1])
     if provider_nm.lower().split(' ')[0] in result['href'].split('.')[1]:
         if loc_dict['title_pattern'] in result['title'].lower():
             return result['href']
@@ -142,8 +141,8 @@ class Searcher:
                             translations[locale_nm], provider_offer['provider_name'], locale_nm)
                         if result is not None:
                             return result
-                    else:
-                        print('Ignoring ' + provider_offer['provider_name'])
+                    # else:
+                    #     print('Ignoring ' + provider_offer['provider_name'])
         return None
 
     async def _construct_offers(self, movie_id: int, movie_nm: str, year: str,
@@ -152,7 +151,7 @@ class Searcher:
         print(translations)
         offers: Dict[str, str] = {}
         for locale_nm, option in loc_options.items():
-            print(locale_nm)
+            # print(locale_nm)
             offer = await self._construct_loc_offer(locale_nm, option, translations)
             if offer is not None:
                 offers[locale_nm] = offer
@@ -160,7 +159,7 @@ class Searcher:
         return offers
 
     async def _try_provider(self, movie_str: str, provider_nm: str, locale_nm: str) -> str | None:
-        print(provider_nm)
+        # print(provider_nm)
         locale = locales[locale_nm]
         query = locale['pattern'].format(movie_str, provider_nm)
         results = [r async for r in self._duckduckgo_search.text(query, region=locale['region'], max_results=10)]
