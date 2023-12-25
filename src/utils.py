@@ -30,7 +30,7 @@ async def construct_reply_for_variants(movie_variants: List[Tuple[int, str, str]
             name = naming_pattern.format(variant[1], variant[2])
             button_txt = f'{index + 1}. {name}'
             reply_txt += ('\n' + button_txt)
-            kb_builder.button(text=button_txt[:16],
+            kb_builder.button(text=button_txt[:16] + '...',
                               callback_data=SearchData(movie_id=int(variant[0])))
         reply_txt += '\nPlease pick your movie'
         kb_builder.button(text='None', callback_data='none')
@@ -40,7 +40,7 @@ async def construct_reply_for_variants(movie_variants: List[Tuple[int, str, str]
         name = naming_pattern.format(variant[1], variant[2])
         button_txt = name
         reply_txt += ('\n' + button_txt)
-        kb_builder.button(text=button_txt[:16],
+        kb_builder.button(text=button_txt[:16] + '...',
                           callback_data=SearchData(movie_id=int(variant[0])))
         kb_builder.button(text='No', callback_data='none')
     else:
