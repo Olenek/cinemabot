@@ -52,17 +52,16 @@ class Searcher:
         return await self._construct_offer(fallback_url[:10])
 
     async def _construct_offer(self, tmdb_url: str):
-        tmdb_response = await self._session.get(
-            tmdb_url
-        )
-
-        html = await tmdb_response.read()
-
-        soup = BeautifulSoup(html, 'html.parser')
-        print(soup)
-        section = soup.find('div', {'class': 'ott_provider'})
-        print(section)
-        if section is None:
+        print(tmdb_url)
+        async with self._session.get(
+            url=tmdb_url
+        ) as response:
+            response_text = await response.text()
+            soup = BeautifulSoup(response_text, 'html.parser')
+            print(soup)
+            section = soup.find('div', {'class': 'ott_provider'})
+            print(section)
+            if section is None:
+                return []
+            print(section.find_all('a', {'class': lambda x: str.startswith(x, 'Watch')}))
             return []
-        print(section.find_all('a', {'class': lambda x: str.startswith(x, 'Watch')}))
-        return []
