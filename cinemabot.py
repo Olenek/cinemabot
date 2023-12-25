@@ -19,9 +19,11 @@ scribe = Scribe('database.db')
 
 dp = Dispatcher()
 
+
 class MyDialog(StatesGroup):
-    waits = State()
     none = State()
+    waits = State()
+
 
 @dp.message(Command('start'))
 async def send_welcome(message: Message):
