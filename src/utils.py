@@ -34,15 +34,17 @@ async def build_keyboard(movie_variants: List[Tuple[int, str, str]], chat_id: in
     return builder
 
 
-async def construct_reply_for_variants(movie_variants: List[Tuple[int, str, str]]) -> Tuple[str, InlineKeyboardMarkup | None]:
+async def construct_reply_for_variants(movie_variants: List[Tuple[int, str, str]]) -> Tuple[
+    str, InlineKeyboardMarkup | None]:
     naming_pattern = '{}, {}'
     kb_builder = InlineKeyboardBuilder()
     if len(movie_variants) > 1:
         reply_txt = 'Here is what I managed to find:'
-        for variant in movie_variants:
+        for index, variant in enumerate(movie_variants):
             name = naming_pattern.format(variant[1], variant[2])[:52].replace(':', ',')
-            reply_txt += ('\n' + name)
-            kb_builder.button(text=name,
+            button_txt = f'{index + 1}. {name}'
+            reply_txt += ('\n' + button_txt)
+            kb_builder.button(text=button_txt,
                               callback_data=SearchData(movie_nm=name,
                                                        movie_id=int(variant[0])))
         kb_builder.button(text='None of this are what I need', callback_data='none')
@@ -51,7 +53,7 @@ async def construct_reply_for_variants(movie_variants: List[Tuple[int, str, str]
         reply_txt = 'Is this the movie you are searching?'
         name = naming_pattern.format(variant[1], variant[2])[:52].replace(':', ',')
         reply_txt += ('\n' + name)
-        kb_builder.button(text=name,
+        kb_builder.button(text='Yes',
                           callback_data=SearchData(movie_nm=name,
                                                    movie_id=int(variant[0])))
         kb_builder.button(text='No', callback_data='none')

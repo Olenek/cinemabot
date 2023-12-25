@@ -65,12 +65,12 @@ async def send_movie_offers(query: CallbackQuery):
     if len(offers) > 1:
         reply_txt = 'Here are some of the places you can watch it:'
         for locale_nm, url in offers.items():
-            reply_txt += f"\n{locales[locale_nm]['emoji']} - {url})"
+            reply_txt += f"\n{locales[locale_nm]['emoji']} - {url}"
         await query.message.answer(reply_txt)
     elif len(offers) == 1:
         reply_txt = 'Here is where you can watch it:'
         for locale_nm, url in offers.items():
-            reply_txt += f"\n{locales[locale_nm]['emoji']} - {url})"
+            reply_txt += f"\n{locales[locale_nm]['emoji']} - {url}"
         await query.message.answer(reply_txt)
     else:
         reply_txt = 'Unfortunately, I could not find this movie anywhere(\n.Contact @Olenek0 for fixes'

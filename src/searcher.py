@@ -83,12 +83,17 @@ class Searcher:
     async def _construct_loc_offer(self, locale_nm: str,
                                    options: Dict[str, Any],
                                    translations: Dict[str, str]) -> str | None:
-        watch_variants = ['flatrate', 'rent', 'buy']
+        watch_variants = [
+            'flatrate',
+            'rent',
+            'buy'
+        ]
         for variant in watch_variants:
             for provider_offer in options[variant]:
-                result = await self._try_provider(translations[locale_nm], provider_offer['provider_name'], locale_nm)
-                if result is not None:
-                    return result
+                if provider_offer['provider_name'] != 'Kinopoisk':
+                    result = await self._try_provider(translations[locale_nm], provider_offer['provider_name'], locale_nm)
+                    if result is not None:
+                        return result
         return None
 
     async def _construct_offers(self, movie_id: int, movie_nm: str, loc_options: Dict[str, Dict[Any, Any]]) -> Dict[
@@ -96,7 +101,7 @@ class Searcher:
         translations = await self._get_translated_titles(movie_id, movie_nm)
         offers: Dict[str, str] = {}
         for locale_nm, option in loc_options.items():
-            offer =  await self._construct_loc_offer(locale_nm, option, translations)
+            offer = await self._construct_loc_offer(locale_nm, option, translations)
             if offer is not None:
                 offers[locale_nm] = offer
 
