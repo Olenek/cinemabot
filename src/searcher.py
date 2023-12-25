@@ -64,7 +64,7 @@ class Searcher:
             params={'api_key': self._tmdb_token},
         )
         response_data = await tmdb_response.json()
-        providers = await response_data['results']
+        providers = response_data['results']
         options = {locale_nm: providers.get(locale_nm, {}) for locale_nm in locales.keys()}
         return await self._construct_offers(movie_id, movie_nm, options)
 
