@@ -9,41 +9,41 @@ locales = {
         'title_pattern': 'смотреть',
         'emoji': '🇷🇺',
         'region': 'ru-ru',
-        'providers': {
-            'Youtube', 'Wink'
-            'Ivi', 'Premier',
-            'Okko', 'Amediateka',
-        }
+        # 'providers': {
+        #     'Youtube', 'Wink'
+        #     'Ivi', 'Premier',
+        #     'Okko', 'Amediateka',
+        # }
     },
     'US': {
         'pattern': 'watch {} on {}',
         'title_pattern': 'watch',
         'emoji': '🇺🇸',
         'region': 'us-en',
-        'providers': {
-            'Netflix', 'Amazon Prime Video',
-            'Disney Plus', 'Apple TV Plus',
-            'Apple TV', 'Hulu',
-            'Crunchyroll', 'HBO Max', 'Max', 'Max Amazon Channel'
-            'Peacock', 'Peacock Premium',
-            'Youtube', 'Google Play Movies',
-            'Amazon Video',
-        }
+        # 'providers': {
+        #     'Netflix', 'Amazon Prime Video',
+        #     'Disney Plus', 'Apple TV Plus',
+        #     'Apple TV', 'Hulu',
+        #     'Crunchyroll', 'HBO Max', 'Max', 'Max Amazon Channel'
+        #     'Peacock', 'Peacock Premium',
+        #     'Youtube', 'Google Play Movies',
+        #     'Amazon Video',
+        # }
     },
     'JP': {
         'pattern': '{} {} de miru',
         'title_pattern': '',
         'emoji': '🇯🇵',
         'region': 'jp-jp',
-        'providers': {
-            'Netflix', 'Amazon Prime Video',
-            'Disney Plus', 'Apple TV Plus',
-            'Apple TV', 'Hulu',
-            'Crunchyroll', 'HBO Max', 'Max', 'Max Amazon Channel'
-            'Peacock', 'Peacock Premium',
-            'Youtube', 'Google Play Movies',
-            'Amazon Video',
-        }
+        # 'providers': {
+        #     'Netflix', 'Amazon Prime Video',
+        #     'Disney Plus', 'Apple TV Plus',
+        #     'Apple TV', 'Hulu',
+        #     'Crunchyroll', 'HBO Max', 'Max', 'Max Amazon Channel'
+        #     'Peacock', 'Peacock Premium',
+        #     'Youtube', 'Google Play Movies',
+        #     'Amazon Video',
+        # }
     }
 }
 
@@ -58,6 +58,8 @@ def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provi
             print(f"bad title: {result['title']}")
     else:
         print(f"bad href: {result['href']}")
+        print(domain)
+        print(superdomain)
     return None
 
 
@@ -140,13 +142,10 @@ class Searcher:
         for variant in watch_variants:
             if variant in options.keys():
                 for provider_offer in options[variant]:
-                    if provider_offer['provider_name'] in locales[locale_nm]['providers']:
-                        result = await self._try_provider(
-                            translations[locale_nm], provider_offer['provider_name'], locale_nm)
-                        if result is not None:
-                            return result
-                    else:
-                        print('Ignoring ' + provider_offer['provider_name'])
+                    result = await self._try_provider(
+                        translations[locale_nm], provider_offer['provider_name'], locale_nm)
+                    if result is not None:
+                        return result
         return None
 
     async def _construct_offers(self, movie_id: int, movie_nm: str, year: str,
