@@ -43,7 +43,9 @@ class Searcher:
             if response_data.get(locale, None) is not None:
                 return await self._construct_offer(response_data[locale]['link'])
 
-        return await self._construct_offer(response_data[any_locale]['link'][:10])
+        fallback_url = response_data[any_locale]['link']
+        print(fallback_url)
+        return await self._construct_offer(fallback_url[:10])
 
     async def _construct_offer(self, tmdb_url: str):
         tmdb_response = await self._session.get(
