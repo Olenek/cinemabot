@@ -40,7 +40,14 @@ async def send_history(message: Message):
     for entry in await scribe.get_last_n(message.chat.id.real, 5):
         await bot(SendMessage(chat_id=message.chat.id, text=f'Query: {entry[0]}\n'
                                                             f'Result: {entry[1]}\n'
-                                                            f'Date: {entry[2]}\n'))
+                                                            f'Date: {entry[2]}'))
+
+
+@dp.message(Command('stats'))
+async def send_stats(message: Message):
+    for entry in await scribe.get_stats(message.chat.id.real):
+        await bot(SendMessage(chat_id=message.chat.id, text=f'Movie: {entry[0]}\n'
+                                                            f'Query Count: {entry[1]}'))
 
 
 @dp.message()
