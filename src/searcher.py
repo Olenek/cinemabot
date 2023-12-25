@@ -137,11 +137,10 @@ class Searcher:
         for variant in watch_variants:
             if variant in options.keys():
                 for provider_offer in options[variant]:
-                    if provider_offer['provider_name'] in locales[locale_nm]['providers']:
-                        result = await self._try_provider(translations[locale_nm], provider_offer['provider_name'],
-                                                          locale_nm)
-                        if result is not None:
-                            return result
+                    result = await self._try_provider(translations[locale_nm], provider_offer['provider_name'],
+                                                      locale_nm)
+                    if result is not None:
+                        return result
         return None
 
     async def _construct_offers(self, movie_id: int, movie_nm: str, year: str,
