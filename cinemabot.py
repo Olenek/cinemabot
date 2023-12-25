@@ -13,8 +13,8 @@ from src.scribe import Scribe
 from src.searcher import Searcher, locales
 from src.utils import setup_bot_commands, construct_reply_for_variants, SearchData
 
-bot = Bot(token=os.getenv('BOT_TOKEN'))
-searcher = Searcher(tmdb_token=os.getenv('TMDB_TOKEN'))
+bot = Bot(token=os.environ['BOT_TOKEN'])
+searcher = Searcher(tmdb_token=os.environ['TMDB_TOKEN'])
 scribe = Scribe('database.db')
 
 dp = Dispatcher()

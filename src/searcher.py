@@ -81,6 +81,8 @@ class Searcher:
         self._duckduckgo_search: AsyncDDGS = AsyncDDGS()
 
     async def search_tmdb(self, query: str) -> List[Tuple[int, str, str]]:
+        assert self._session is not None, 'Must first begin session'
+
         tmdb_response = await self._session.get(self._tmdb_search_url,
                                                 params={'query': query, 'api_key': self._tmdb_token},
                                                 )
@@ -90,14 +92,6 @@ class Searcher:
             return [(item['id'], item['title'], item['release_date'][:4]) for item in response_data[:3]]
         return []
 
-    async def get_name_year(self, movie_id: int) -> Tuple[str, str]:
-        tmdb_response = await self._session.get(
-            self._tmdb_movies_url.format(movie_id),
-            params={'api_key': self._tmdb_token},
-        )
-        response_data = await tmdb_response.json()
-        return response_data['original_title'], response_data['release_date'][:4]
-
     async def search_offers(self, movie_id: int) -> Dict[str, str]:
         """
         Used to search for streaming offers for the movie
@@ -105,6 +99,8 @@ class Searcher:
         :param movie_id: tmdb movie id
         :return: Dict[Locale_nm, URL]
         """
+        assert self._session is not None, 'Must first begin session'
+
         tmdb_response = await self._session.get(
             self._tmdb_watch_providers_url.format(movie_id),
             params={'api_key': self._tmdb_token},
@@ -112,10 +108,22 @@ class Searcher:
         response_data = await tmdb_response.json()
         providers = response_data['results']
         options = {locale_nm: providers.get(locale_nm, {}) for locale_nm in locales.keys()}
-        name, year = await self.get_name_year(movie_id)
-        return await self._construct_offers(movie_id, name, year, options)
+        name, year = await self.__get_name_year(movie_id)
+        return await self.__construct_offers(movie_id, name, year, options)
 
-    async def _get_translated_titles(self, movie_id: int, movie_nm: str, year: str):
+    async def __get_name_year(self, movie_id: int) -> Tuple[str, str]:
+        assert self._session is not None, 'Must first begin session'
+
+        tmdb_response = await self._session.get(
+            self._tmdb_movies_url.format(movie_id),
+            params={'api_key': self._tmdb_token},
+        )
+        response_data = await tmdb_response.json()
+        return response_data['original_title'], response_data['release_date'][:4]
+
+    async def __get_translated_titles(self, movie_id: int, movie_nm: str, year: str):
+        assert self._session is not None, 'Must first begin session'
+
         translations: Dict[str, str] = {}
         async with self._session.get(
                 url=self._tmdb_translations_url.format(movie_id), params={'api_key': self._tmdb_token},
@@ -132,9 +140,11 @@ class Searcher:
 
         return translations
 
-    async def _construct_loc_offer(self, locale_nm: str,
-                                   options: Dict[str, Any],
-                                   translations: Dict[str, str]) -> str | None:
+    async def __construct_offer_for_locale(self, locale_nm: str,
+                                           options: Dict[str, Any],
+                                           translations: Dict[str, str]) -> str | None:
+        assert self._session is not None, 'Must first begin session'
+
         watch_variants = [
             'free',
             'flatrate',
@@ -145,25 +155,26 @@ class Searcher:
             if variant in options.keys():
                 for provider_offer in options[variant]:
                     if provider_offer['provider_name'] not in ignores:
-                        result = await self._try_provider(
+                        result = await self.__try_provider(
                             translations[locale_nm], provider_offer['provider_name'], locale_nm)
                         if result is not None:
                             return result
         return None
 
-    async def _construct_offers(self, movie_id: int, movie_nm: str, year: str,
-                                loc_options: Dict[str, Dict[Any, Any]]) -> Dict[str, str]:
-        translations = await self._get_translated_titles(movie_id, movie_nm, year)
-        print(translations)
+    async def __construct_offers(self, movie_id: int, movie_nm: str, year: str,
+                                 loc_options: Dict[str, Dict[Any, Any]]) -> Dict[str, str]:
+        assert self._session is not None, 'Must first begin session'
+        translations = await self.__get_translated_titles(movie_id, movie_nm, year)
         offers: Dict[str, str] = {}
         for locale_nm, option in loc_options.items():
-            offer = await self._construct_loc_offer(locale_nm, option, translations)
+            offer = await self.__construct_offer_for_locale(locale_nm, option, translations)
             if offer is not None:
                 offers[locale_nm] = offer
 
         return offers
 
-    async def _try_provider(self, movie_str: str, provider_nm: str, locale_nm: str) -> str | None:
+    async def __try_provider(self, movie_str: str, provider_nm: str, locale_nm: str) -> str | None:
+        assert self._duckduckgo_search is not None, 'Must first begin session'
         # print(provider_nm)
         locale = locales[locale_nm]
         query = locale['pattern'].format(movie_str, provider_nm)

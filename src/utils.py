@@ -11,7 +11,7 @@ class SearchData(CallbackData, prefix='mv'):
     movie_nm: str
 
 
-async def setup_bot_commands(bot: Bot):
+async def setup_bot_commands(bot: Bot) -> None:
     bot_commands = [
         BotCommand(command="/help", description="Get info about me"),
         BotCommand(command="/start", description="Allow me to introduce myself"),
