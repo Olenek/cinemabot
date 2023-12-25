@@ -59,6 +59,7 @@ class Searcher:
         html = await tmdb_response.read()
 
         soup = BeautifulSoup(html, 'html.parser')
-        print(soup)
-        print(soup.find_all(re.compile('^h[1-6]$')))
+        section = soup.find('div', class_='ott_provider')
+        print(section)
+        print(section.find_all('a', {'class': lambda x: str.startswith(x, 'Watch')}))
         return []
