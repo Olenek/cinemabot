@@ -41,7 +41,7 @@ class Scribe:
 
         self.connection.execute(
             """
-            insert into movies (movie_id, movie_nm)
+            insert or ignore into movies (movie_id, movie_nm)
             values (?, ?)
             """, (movie_id, movie_nm)
         )
@@ -68,7 +68,7 @@ class Scribe:
             on m.movie_id = q.movie_id
             and chat_id == ?
             group by m.movie_nm
-            order by cnt
+            order by cnt desc
             limit ?
             """, (chat_id, 5)
         ).fetchall()
