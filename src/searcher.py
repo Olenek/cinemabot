@@ -160,7 +160,9 @@ class Searcher:
     async def _try_provider(self, movie_str: str, provider_nm: str, locale_nm: str) -> str | None:
         locale = locales[locale_nm]
         query = locale['pattern'].format(movie_str, provider_nm)
+        print(query)
         results = [r async for r in self._duckduckgo_search.text(query, region=locale['region'], max_results=5)]
+        print(results)
         for result in results:
             print(result['href'])
             url = _check_search_result(result, locale, provider_nm)
