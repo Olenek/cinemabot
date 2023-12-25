@@ -47,6 +47,8 @@ locales = {
     }
 }
 
+ignores = {'Google Play Movies', 'Kinopoisk'}
+
 
 def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provider_nm: str) \
         -> str | None:
@@ -142,10 +144,11 @@ class Searcher:
         for variant in watch_variants:
             if variant in options.keys():
                 for provider_offer in options[variant]:
-                    result = await self._try_provider(
-                        translations[locale_nm], provider_offer['provider_name'], locale_nm)
-                    if result is not None:
-                        return result
+                    if provider_offer['provider_name'] not in ignores:
+                        result = await self._try_provider(
+                            translations[locale_nm], provider_offer['provider_name'], locale_nm)
+                        if result is not None:
+                            return result
         return None
 
     async def _construct_offers(self, movie_id: int, movie_nm: str, year: str,
@@ -154,7 +157,6 @@ class Searcher:
         print(translations)
         offers: Dict[str, str] = {}
         for locale_nm, option in loc_options.items():
-            # print(locale_nm)
             offer = await self._construct_loc_offer(locale_nm, option, translations)
             if offer is not None:
                 offers[locale_nm] = offer
