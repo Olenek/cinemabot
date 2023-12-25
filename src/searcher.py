@@ -29,7 +29,7 @@ ignores = {'Google Play Movies', 'Kinopoisk'}
 
 def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provider_nm: str) \
         -> str | None:
-    superdomain, domain = result['href'].split('//')[1].split('.')[:2]
+    superdomain, domain = result['href'].split('/')[2].split('.')[:2]
     if provider_nm.lower().split(' ')[0] in superdomain or provider_nm.lower().split(' ')[0] in domain:
         if loc_dict['title_pattern'] in result['title'].lower():
             return result['href']
@@ -44,7 +44,6 @@ def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provi
 class Searcher:
     def __init__(self, tmdb_token: str):
         self._tmdb_token = tmdb_token
-
         self._tmdb_search_url = 'https://api.themoviedb.org/3/search/movie'
         self._tmdb_watch_providers_url = 'https://api.themoviedb.org/3/movie/{}/watch/providers'
         self._tmdb_translations_url = 'https://api.themoviedb.org/3/movie/{}/translations'
