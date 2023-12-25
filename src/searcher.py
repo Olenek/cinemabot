@@ -4,10 +4,10 @@ from duckduckgo_search import AsyncDDGS
 
 locales = {
     'RU': {
-        'pattern': '\{} смотреть на {}'
+        'pattern': '{} смотреть на {}'
     },
     'US': {
-        'pattern': '\{} watch on {}'
+        'pattern': '{} watch on {}'
     }
 }
 
