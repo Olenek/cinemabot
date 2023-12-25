@@ -36,8 +36,10 @@ class Searcher:
             self._tmdb_watch_providers_url.format(movie_id),
             params={'api_key': self._tmdb_token},
         )
-        response_data = (await tmdb_response.json())
+        response_data = (await tmdb_response.json()['result'])
+        print(response_data)
         any_locale = next(iter(response_data.keys()))
+        print(any_locale)
 
         for locale in locale_priority:
             if response_data.get(locale, None) is not None:
