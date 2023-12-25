@@ -104,7 +104,7 @@ class Searcher:
         return offers
 
     async def _try_provider(self, movie_nm: str, provider_nm: str, locale: str) -> str | None:
-        query = locales[locale].format(movie_nm, provider_nm)
+        query = locales[locale]['pattern'].format(movie_nm, provider_nm)
         async with self._session.get(
                 url=self._google_search_url, params={'q': query},
         ) as response:
