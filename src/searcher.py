@@ -1,7 +1,7 @@
-from typing import List, Tuple, Dict, Iterable, Any
+from typing import List, Tuple, Dict, Any
+
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
-
 
 # user_agents = [
 #     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 OPR/72.0.3815.465 (Edition Yx GX)',
@@ -22,6 +22,8 @@ locales = {
         'pattern': '{} watch on {}'
     }
 }
+
+
 class Searcher:
     def __init__(self, tmdb_token: str):
         # self._tmdb_header = {
@@ -96,7 +98,8 @@ class Searcher:
                     return result
         return None
 
-    async def _construct_offers(self, movie_id: int, movie_nm: str, loc_options: Dict[str, Dict[Any, Any]]) -> Dict[str, str | None]:
+    async def _construct_offers(self, movie_id: int, movie_nm: str, loc_options: Dict[str, Dict[Any, Any]]) -> Dict[
+        str, str | None]:
         translations = await self._get_translated_titles(movie_id, movie_nm)
         offers: Dict[str, str | None] = {}
         for locale_nm, option in loc_options.items():
@@ -105,8 +108,13 @@ class Searcher:
 
     async def _try_provider(self, movie_nm: str, provider_nm: str, locale: str) -> str | None:
         query = locales[locale]['pattern'].format(movie_nm, provider_nm)
+        print(query)
         async with self._session.get(
-                url=self._google_search_url, params={'q': query},
+                url=self._google_search_url, params={'q': query}, header={
+                    'Accept': '*/*',
+                    'Accept-Language': 'en-US,en;q=0.5',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82',
+                }
         ) as response:
             response_text = await response.text()
             soup = BeautifulSoup(response_text, 'html.parser')
