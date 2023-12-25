@@ -11,6 +11,10 @@ locales = {
     'US': {
         'pattern': '{} watch on {}',
         'emoji': '🇺🇸'
+    },
+    'JP': {
+        'pattern': '{} {} de miru',
+        'emoji': '🇯🇵'
     }
 }
 
@@ -26,7 +30,6 @@ class Searcher:
         self._tmdb_search_url = 'https://api.themoviedb.org/3/search/movie'
         self._tmdb_watch_providers_url = 'https://api.themoviedb.org/3/movie/{}/watch/providers'
         self._tmdb_translations_url = 'https://api.themoviedb.org/3/movie/{}/translations'
-        self._google_search_url = 'https://duckduckgo.com'
         self._duckduckgo_search = None
         self._session = None
 
@@ -89,12 +92,14 @@ class Searcher:
         return None
 
     async def _construct_offers(self, movie_id: int, movie_nm: str, loc_options: Dict[str, Dict[Any, Any]]) -> Dict[
-        str, str | None]:
+        str, str]:
         translations = await self._get_translated_titles(movie_id, movie_nm)
-        offers: Dict[str, str | None] = {}
+        offers: Dict[str, str] = {}
         for locale_nm, option in loc_options.items():
-            offers[locale_nm] = await self._construct_loc_offer(locale_nm, option, translations)
-        print(offers)
+            offer =  await self._construct_loc_offer(locale_nm, option, translations)
+            if offer is not None:
+                offers[locale_nm] = offer
+
         return offers
 
     async def _try_provider(self, movie_nm: str, provider_nm: str, locale: str) -> str | None:
