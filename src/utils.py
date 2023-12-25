@@ -7,7 +7,6 @@ from aiogram.utils.keyboard import InlineKeyboardMarkup, InlineKeyboardBuilder
 
 
 class SearchData(CallbackData, prefix='mv'):
-    message_id: int
     movie_id: int
     movie_nm: str
 
