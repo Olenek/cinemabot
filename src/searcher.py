@@ -162,6 +162,7 @@ class Searcher:
         query = locale['pattern'].format(movie_str, provider_nm)
         results = [r async for r in self._duckduckgo_search.text(query, region=locale['region'], max_results=5)]
         for result in results:
+            print(result['href'])
             url = _check_search_result(result, locale, provider_nm)
             if url is not None:
                 return url
