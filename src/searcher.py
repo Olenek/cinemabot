@@ -62,6 +62,7 @@ providers = [
 
 def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provider_nm: str) \
         -> str | None:
+    print(result['href'].split('.')[1])
     if provider_nm.lower().split(' ')[0] in result['href'].split('.')[1]:
         if loc_dict['title_pattern'] in result['title'].lower():
             print(provider_nm)
