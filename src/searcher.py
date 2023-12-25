@@ -37,10 +37,13 @@ class Searcher:
             params={'api_key': self._tmdb_token},
         )
         response_data = (await tmdb_response.json())
+        any_locale = next(iter(response_data.keys()))
+
         for locale in locale_priority:
             if response_data.get(locale, None) is not None:
                 return await self._construct_offer(response_data[locale]['link'])
-        return await self._construct_offer(response_data[response_data.keys()[0]]['link'][:10])
+
+        return await self._construct_offer(response_data[any_locale]['link'][:10])
 
     async def _construct_offer(self, tmdb_url: str):
         tmdb_response = await self._session.get(
