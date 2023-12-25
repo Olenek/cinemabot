@@ -26,7 +26,8 @@ class Scribe:
                 """
                 create table movies (
                     movie_id integer primary_key,
-                    movie_nm varchar(256)
+                    movie_nm varchar(256),
+                    UNIQUE (movie_id)
                 )
                 """
             )
