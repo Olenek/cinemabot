@@ -32,7 +32,7 @@ class Scribe:
                 """
             )
 
-    def record_query(self, chat_id: int, query_txt: str, movie_id: int, movie_nm: str) -> None:
+    async def record_query(self, chat_id: int, query_txt: str, movie_id: int, movie_nm: str) -> None:
         self.connection.execute(
             """
             insert into queries (chat_id, query_dttm, query_txt, movie_id) 
@@ -49,7 +49,7 @@ class Scribe:
 
         self.connection.commit()
 
-    def get_last_n(self, chat_id: int, n: int) -> List[Tuple[str, str, datetime]]:
+    async def get_last_n(self, chat_id: int, n: int) -> List[Tuple[str, str, datetime]]:
         return self.connection.execute(
             """
             select q.query_txt, m.movie_nm, q.query_dttm  from queries q
@@ -61,7 +61,7 @@ class Scribe:
             """, (chat_id, n)
         ).fetchall()
 
-    def get_stats(self, chat_id: int) -> List[Tuple[str, str, datetime]]:
+    async def get_stats(self, chat_id: int) -> List[Tuple[str, str, datetime]]:
         return self.connection.execute(
             """
             select m.movie_nm, count(*) as cnt from queries q

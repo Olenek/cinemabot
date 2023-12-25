@@ -9,41 +9,18 @@ locales = {
         'title_pattern': 'смотреть',
         'emoji': '🇷🇺',
         'region': 'ru-ru',
-        # 'providers': {
-        #     'Youtube', 'Wink'
-        #     'Ivi', 'Premier',
-        #     'Okko', 'Amediateka',
-        # }
     },
     'US': {
         'pattern': 'watch {} on {}',
         'title_pattern': 'watch',
         'emoji': '🇺🇸',
         'region': 'us-en',
-        # 'providers': {
-        #     'Netflix', 'Amazon Prime Video',
-        #     'Disney Plus', 'Apple TV Plus',
-        #     'Apple TV', 'Hulu',
-        #     'Crunchyroll', 'HBO Max', 'Max', 'Max Amazon Channel'
-        #     'Peacock', 'Peacock Premium',
-        #     'Youtube', 'Google Play Movies',
-        #     'Amazon Video',
-        # }
     },
     'JP': {
         'pattern': '{} {} de miru',
         'title_pattern': '',
         'emoji': '🇯🇵',
         'region': 'jp-jp',
-        # 'providers': {
-        #     'Netflix', 'Amazon Prime Video',
-        #     'Disney Plus', 'Apple TV Plus',
-        #     'Apple TV', 'Hulu',
-        #     'Crunchyroll', 'HBO Max', 'Max', 'Max Amazon Channel'
-        #     'Peacock', 'Peacock Premium',
-        #     'Youtube', 'Google Play Movies',
-        #     'Amazon Video',
-        # }
     }
 }
 
@@ -56,10 +33,9 @@ def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provi
     if provider_nm.lower().split(' ')[0] in superdomain or provider_nm.lower().split(' ')[0] in domain:
         if loc_dict['title_pattern'] in result['title'].lower():
             return result['href']
-        else:
-            print(f"bad title: {result['title']}")
-    else:
-        pass
+        # else:
+            # print(f"bad title: {result['title']}")
+    # else:
         # print(f"bad href: {result['href']} for provider {provider_nm}")
 
     return None

@@ -44,7 +44,7 @@ async def send_help(message: Message):
 
 @dp.message(Command('history'))
 async def send_history(message: Message):
-    for entry in scribe.get_last_n(message.chat.id.real, 5):
+    for entry in await scribe.get_last_n(message.chat.id.real, 5):
         await bot(SendMessage(chat_id=message.chat.id, text=f'Query: {entry[0]}\n'
                                                             f'Result: {entry[1]}\n'
                                                             f'Date: {entry[2]}'))
@@ -52,7 +52,7 @@ async def send_history(message: Message):
 
 @dp.message(Command('stats'))
 async def send_stats(message: Message):
-    for entry in scribe.get_stats(message.chat.id.real):
+    for entry in await scribe.get_stats(message.chat.id.real):
         await bot(SendMessage(chat_id=message.chat.id, text=f'Movie: {entry[0]}\n'
                                                             f'Query Count: {entry[1]}'))
 
@@ -77,7 +77,7 @@ async def movie_not_found(query: CallbackQuery, state: FSMContext):
 async def send_movie_offers(query: CallbackQuery, state: FSMContext):
     data = SearchData.unpack(query.data)
     usr_query = (await state.get_data())['query']
-    scribe.record_query(query.message.chat.id, usr_query, data.movie_id, data.movie_nm)
+    await scribe.record_query(query.message.chat.id, usr_query, data.movie_id, data.movie_nm)
     await state.set_state(MyDialog.none)
     offers: Dict[str, str] = await searcher.search_offers(data.movie_id)
 
@@ -100,6 +100,7 @@ async def main():
     await searcher.begin_session()
     await setup_bot_commands(bot)
     await dp.start_polling(bot)
+    print('Started polling...')
 
 
 if __name__ == '__main__':
