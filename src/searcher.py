@@ -62,14 +62,15 @@ class Searcher:
         :param movie_id: tmdb movie id
         :return: Dict[Locale_nm, URL]
         """
-        name, year = self.get_name_year(movie_id)
-        tmdb_response = await self._session.get(
-            self._tmdb_watch_providers_url.format(movie_id),
-            params={'api_key': self._tmdb_token},
-        )
-        response_data = await tmdb_response.json()
-        providers = response_data['results']
-        options = {locale_nm: providers.get(locale_nm, {}) for locale_nm in locales.keys()}
+        with self.get_name_year(movie_id) as name_year_cor:
+            tmdb_response = await self._session.get(
+                self._tmdb_watch_providers_url.format(movie_id),
+                params={'api_key': self._tmdb_token},
+            )
+            response_data = await tmdb_response.json()
+            providers = response_data['results']
+            options = {locale_nm: providers.get(locale_nm, {}) for locale_nm in locales.keys()}
+            name, year = await name_year_cor
         return await self._construct_offers(movie_id, name, year, options)
 
     async def _get_translated_titles(self, movie_id: int, movie_nm: str, year: str):
