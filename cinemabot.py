@@ -73,7 +73,7 @@ async def send_movie_offers(query: CallbackQuery):
             reply_txt += f"\n{locales[locale_nm]['emoji']} - {url}"
         await query.message.answer(reply_txt)
     else:
-        reply_txt = 'Unfortunately, I could not find this movie anywhere(\n.Contact @Olenek0 for fixes'
+        reply_txt = 'Unfortunately, I could not find this movie anywhere(\nContact @Olenek0 for fixes'
         await query.message.answer(reply_txt)
 
 

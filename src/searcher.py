@@ -93,9 +93,10 @@ class Searcher:
                                    options: Dict[str, Any],
                                    translations: Dict[str, str]) -> str | None:
         watch_variants = [
+            'free',
             'flatrate',
             'rent',
-            # 'buy'
+            'buy',
         ]
         for variant in watch_variants:
             if variant in options.keys():
