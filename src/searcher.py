@@ -29,6 +29,7 @@ def _check_search_result(result: Dict[str, Any], loc_dict: Dict[str, str], provi
         -> str | None:
     # if provider_nm.lower().replace(' ', '') in result['href']:
     if loc_dict['title_pattern'] in result['title'].lower():
+        print(provider_nm)
         return result['href']
     return None
 
