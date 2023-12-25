@@ -4,8 +4,10 @@ from typing import Dict
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
 from aiogram.methods.send_message import SendMessage
 from aiogram.types import Message, CallbackQuery
+from aiogram.filters.state import State, StatesGroup
 
 from src.scribe import Scribe
 from src.searcher import Searcher, locales
@@ -17,6 +19,9 @@ scribe = Scribe('database.db')
 
 dp = Dispatcher()
 
+class MyDialog(StatesGroup):
+    waits = State()
+    none = State()
 
 @dp.message(Command('start'))
 async def send_welcome(message: Message):
@@ -51,22 +56,28 @@ async def send_stats(message: Message):
 
 
 @dp.message()
-async def find_movie(message: Message):
+async def find_movie(message: Message, state: FSMContext):
     movie_variants = await searcher.search_tmdb(message.text)
     reply_txt, reply_markup = await construct_reply_for_variants(movie_variants)
+    await state.set_state(MyDialog.waits)
+    await state.update_data(query=message.text)
     await message.reply(reply_txt, reply_markup=reply_markup)
 
 
 @dp.callback_query(F.data == 'none')
-async def movie_not_found(query: CallbackQuery):
+async def movie_not_found(query: CallbackQuery, state: FSMContext):
+    await state.set_state(MyDialog.none)
     await query.message.answer('I am sorry that I could not find your movie. Try rewriting the search query.\n'
                                'I recommend using the full title and maybe the year of release.')
 
 
 @dp.callback_query(SearchData.filter(F.movie_id))
-async def send_movie_offers(query: CallbackQuery):
+@dp.message(MyDialog.waits)
+async def send_movie_offers(query: CallbackQuery, state: FSMContext):
     data = SearchData.unpack(query.data)
-    await scribe.record_query(query.message.chat.id, query.message.text, data.movie_id, data.movie_nm)
+    usr_query = (await state.get_data())['query']
+    await scribe.record_query(query.message.chat.id, usr_query, data.movie_id, data.movie_nm)
+    await state.set_state(MyDialog.none)
     offers: Dict[str, str] = await searcher.search_offers(data.movie_id)
 
     if len(offers) > 1:
